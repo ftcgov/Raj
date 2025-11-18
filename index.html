@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>icloud Account</title>
+  <style>
+    :root{
+      --bg:#f5f7fa;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent:#0071e3;
+      --danger:#e02424;
+      --radius:14px;
+      --glass: rgba(255,255,255,0.6);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      background: linear-gradient(180deg,#f7f9fc 0%, #eef2f7 100%);
+      color:#0f172a;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+    }
+
+    .container{
+      width:100%;
+      max-width:1100px;
+      background:var(--card);
+      border-radius:20px;
+      box-shadow: 0 10px 30px rgba(15,23,42,0.09);
+      overflow:hidden;
+      display:grid;
+      grid-template-columns: 420px 1fr;
+      min-height:620px;
+    }
+
+    /* Left: branding & login */
+    .brand-side{
+      background: linear-gradient(180deg, rgba(250,250,250,0.85), rgba(245,246,250,0.6));
+      padding:36px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      align-items:flex-start;
+    }
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+    .logo img{
+      width:72px;
+      height:72px;
+      object-fit:cover;
+      border-radius:16px;
+      box-shadow:0 6px 20px rgba(2,6,23,0.12);
+      background:linear-gradient(135deg,#fff,#f3f6fb);
+      border:1px solid rgba(0,0,0,0.04);
+    }
+    .title{
+      font-size:20px;
+      font-weight:600;
+      letter-spacing:0.1px;
+    }
+    .subtitle{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:-6px;
+    }
+
+    .login-card{
+      margin-top:18px;
+      width:100%;
+      background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(250,250,250,0.6));
+      border-radius:12px;
+      padding:18px;
+      box-shadow: 0 6px 18px rgba(11,15,34,0.04);
+      border:1px solid rgba(10,20,40,0.03);
+    }
+    .login-card label{font-size:13px; color:var(--muted); display:block; margin-bottom:6px}
+    .login-card input{
+      width:100%;
+      padding:12px 14px;
+      border-radius:10px;
+      border:1px solid rgba(10,20,40,0.06);
+      margin-bottom:12px;
+      font-size:15px;
+      outline:none;
+      background:transparent;
+    }
+    .signin-btn{
+      display:inline-block;
+      padding:12px 16px;
+      background:var(--accent);
+      color:white;
+      border-radius:10px;
+      border:none;
+      cursor:pointer;
+      font-weight:600;
+      width:100%;
+      font-size:15px;
+      box-shadow: 0 8px 24px rgba(0,113,227,0.18);
+    }
+    .muted-small{font-size:12px;color:var(--muted);margin-top:8px}
+
+    /* Right: dashboard */
+    .dashboard{
+      padding:28px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(248,250,253,0.6));
+      position:relative;
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .user-info{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .avatar{
+      width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,#fff,#f3f6fb);
+      display:flex;align-items:center;justify-content:center;font-weight:700;color:#0f172a;
+      border:1px solid rgba(0,0,0,0.05);
+      box-shadow:0 6px 18px rgba(2,6,23,0.06);
+    }
+    .username-title{font-weight:700;font-size:16px}
+    .account-sub{color:var(--muted);font-size:13px}
+
+    .signout{
+      background:transparent;border:1px solid rgba(10,20,40,0.06);padding:8px 12px;border-radius:10px;cursor:pointer;
+      font-weight:600;
+    }
+
+    .content{
+      display:grid;
+      grid-template-columns: 1fr 380px;
+      gap:22px;
+      margin-top:6px;
+    }
+
+    .panel{
+      background:var(--card);
+      border-radius:12px;
+      padding:16px;
+      box-shadow:0 6px 20px rgba(11,15,34,0.04);
+      border:1px solid rgba(10,20,40,0.03);
+    }
+    .panel h3{margin:0 0 8px 0;font-size:15px}
+    .subscriptions{display:flex;flex-direction:column;gap:12px}
+    .sub-item{
+      display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border-radius:10px;border:1px solid rgba(10,20,40,0.03);
+      background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(250,250,250,0.6));
+    }
+    .sub-left{display:flex;gap:12px;align-items:center}
+    .sub-icon{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#f7f9fc,#eef4ff);display:flex;align-items:center;justify-content:center;font-weight:700;border:1px solid rgba(0,0,0,0.03)}
+    .sub-meta{display:flex;flex-direction:column}
+    .sub-name{font-weight:700}
+    .sub-date{font-size:13px;color:var(--muted)}
+    .sub-price{font-weight:700}
+
+    .sub-actions{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+    .cancel-btn{padding:8px 12px;border-radius:10px;border:none;background:#fff;color:var(--danger);cursor:pointer;font-weight:700;border:1px solid rgba(224,36,36,0.06)}
+    .cancel-msg{font-size:13px;color:var(--danger);font-weight:600}
+
+    .side-list{display:flex;flex-direction:column;gap:8px}
+    .option{padding:10px;border-radius:10px;border:1px solid rgba(10,20,40,0.03);cursor:pointer;background:linear-gradient(180deg,#fff,#fbfdff);font-weight:600}
+    .addresses{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+    .address{padding:10px;border-radius:8px;border:1px dashed rgba(10,20,40,0.04);background:#fafbff;font-size:14px;color:#0b1220}
+
+    footer.small{margin-top:auto;color:var(--muted);font-size:13px;text-align:center;padding:12px}
+    @media (max-width:980px){
+      .container{grid-template-columns:1fr;max-width:920px}
+      .content{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main" aria-labelledby="pageTitle">
+    <!-- LEFT: Branding + Login -->
+    <aside class="brand-side" aria-hidden="false">
+      <div class="logo" role="img" aria-label="Prank Seb logo">
+        <!-- User will place IMG_5462.jpg in same folder -->
+        <img src="IMG_5462.jpg" alt="Prank Seb logo (IMG_5462)" id="brandLogo" onerror="this.style.opacity=0.9" />
+        <div>
+          <div class="title">Prank Seb</div>
+          <div class="subtitle">A formal account management demonstration</div>
+        </div>
+      </div>
+
+      <div class="login-card" id="loginCard" aria-live="polite">
+        <form id="loginForm" autocomplete="off" novalidate>
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" placeholder="Enter username" required />
+
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="Enter password" required />
+
+          <button type="submit" class="signin-btn" id="signInBtn">Sign In</button>
+          <div class="muted-small">Signing in with any username and password will allow access for demo purposes.</div>
+        </form>
+      </div>
+
+      <div style="margin-top:auto; color:var(--muted); font-size:13px">
+        <strong>Note:</strong> This page is a demonstration mockup. Do not enter real sensitive credentials.
+      </div>
+    </aside>
+
+    <!-- RIGHT: Dashboard (hidden until login) -->
+    <section class="dashboard" id="dashboard" aria-hidden="true" style="display:none">
+      <div class="topbar">
+        <div class="user-info">
+          <div class="avatar" id="avatarInitial">P</div>
+          <div>
+            <div class="username-title" id="displayUsername">Profile</div>
+            <div class="account-sub">Subscription account • Prank Seb</div>
+          </div>
+        </div>
+        <div>
+          <button class="signout" id="signOutBtn">Sign Out</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div>
+          <div class="panel">
+            <h3>Your Active Subscriptions</h3>
+            <div class="subscriptions" id="subscriptionsList" aria-live="polite">
+              <!-- JS will inject items -->
+            </div>
+          </div>
+
+          <div class="panel" style="margin-top:14px">
+            <h3>Account Overview</h3>
+            <p style="color:var(--muted); margin:0 0 12px 0">
+              Below are controls and details associated with your account. Each subscription can be reviewed or cancelled (demo).
+            </p>
+
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <div class="option" onclick="openPrivacy()">Privacy & Security</div>
+              <div class="option" onclick="alert('Billing portal is a demo — no real charges.')">Billing</div>
+              <div class="option" onclick="alert('Support is not available for this demo.')">Support</div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="panel">
+            <h3>Quick Actions</h3>
+            <div class="side-list">
+              <div class="option" onclick="scrollToSubs()">View Subscriptions</div>
+              <div class="option" onclick="openPrivacy()">Privacy & Security</div>
+              <div class="option" onclick="downloadSample()">Download Statement</div>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-top:12px">
+            <h3>Linked Addresses</h3>
+            <div class="addresses" id="addressesPanel">
+              <!-- addresses injected -->
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <footer class="small">Prank Seb • Account interface • Designed in formal English</footer>
+    </section>
+  </div>
+
+  <script>
+    // ---- Utilities ----
+    function q(id){return document.getElementById(id)}
+
+    function formatCurrency(num){
+      return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(num);
+    }
+
+    // ---- Login behavior ----
+    const loginForm = q('loginForm');
+    const dashboard = q('dashboard');
+    const loginCard = q('loginCard');
+    const displayUsername = q('displayUsername');
+    const avatarInitial = q('avatarInitial');
+    const signOutBtn = q('signOutBtn');
+
+    loginForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      const username = q('username').value.trim() || 'User';
+      // Show dashboard
+      showDashboard(username);
+    });
+
+    signOutBtn.addEventListener('click', function(){
+      // reset to login
+      dashboard.style.display = 'none';
+      dashboard.setAttribute('aria-hidden','true');
+      loginCard.scrollIntoView({behavior:'smooth'});
+      // clear fields
+      q('username').value = '';
+      q('password').value = '';
+      // show login area
+      // (left column always visible)
+    });
+
+    function showDashboard(username){
+      // set username display
+      displayUsername.textContent = username;
+      avatarInitial.textContent = username[0] ? username[0].toUpperCase() : 'P';
+      // show dashboard
+      dashboard.style.display = 'block';
+      dashboard.setAttribute('aria-hidden','false');
+      // build subscriptions and addresses
+      buildSubscriptions(username);
+      buildAddresses();
+      // scroll dashboard into view
+      dashboard.scrollIntoView({behavior:'smooth'});
+    }
+
+    // ---- Subscriptions ----
+    function randomOctoberDate(){
+      // October 2025: 1..31
+      const day = Math.floor(Math.random()*31) + 1;
+      const date = new Date(2025, 9, day); // monthIndex 9 = October
+      const opts = { year:'numeric', month:'long', day:'numeric' };
+      return date.toLocaleDateString('en-US', opts);
+    }
+
+    function buildSubscriptions(username){
+      const list = q('subscriptionsList');
+      list.innerHTML = '';
+      // create 8 subscriptions named "Arms Sell"
+      for(let i=1;i<=8;i++){
+        const id = 'sub-'+i;
+        const createdOn = randomOctoberDate();
+        const item = document.createElement('div');
+        item.className = 'sub-item';
+        item.id = id;
+        item.innerHTML = `
+          <div class="sub-left">
+            <div class="sub-icon">AS</div>
+            <div class="sub-meta">
+              <div class="sub-name">Arms Sell — Subscription #${1000 + i}</div>
+              <div class="sub-date">Activated: ${createdOn}</div>
+            </div>
+          </div>
+          <div class="sub-actions">
+            <div class="sub-price">${formatCurrency(219)}</div>
+            <button class="cancel-btn" onclick="cancelSubscription('${id}')">Cancel</button>
+            <div class="cancel-msg" id="${id}-msg" style="display:none"></div>
+          </div>
+        `;
+        list.appendChild(item);
+      }
+    }
+
+    function cancelSubscription(id){
+      const msgEl = q(id + '-msg');
+      msgEl.style.display = 'block';
+      msgEl.textContent = "We regret to inform you that we cannot accept your cancellation request because this subscription was placed from a different address and you are currently at a different location.";
+      // visually mark the item (optional)
+      const item = q(id);
+      if (item) {
+        item.style.opacity = '0.96';
+        item.style.background = 'linear-gradient(180deg, #fff8f8, #fff4f4)';
+        item.querySelector('.cancel-btn').disabled = true;
+      }
+    }
+
+    // ---- Privacy & Security / Addresses ----
+    const sampleAddresses = [
+      "742 Evergreen Terrace, Springfield, IL 62704",
+      "1600 Pennsylvania Ave, Arlington, VA 22202",
+      "1313 Mockingbird Lane, Los Angeles, CA 90001",
+      "11 Cherry Tree Lane, New York, NY 10001",
+      "221B Baker Street, Boston, MA 02108",
+      "405 Lexington Ave, New York, NY 10174",
+      "350 Fifth Ave, New York, NY 10118",
+      "1 Infinite Loop, Cupertino, CA 95014"
+    ];
+
+    function buildAddresses(){
+      const panel = q('addressesPanel');
+      panel.innerHTML = '';
+      // shuffle and show 8 (we have 8 samples)
+      for(let i=0;i<sampleAddresses.length;i++){
+        const a = document.createElement('div');
+        a.className = 'address';
+        a.textContent = sampleAddresses[i];
+        panel.appendChild(a);
+      }
+    }
+
+    function openPrivacy(){
+      // scroll right panel into view and highlight addresses
+      const panel = q('addressesPanel');
+      panel.scrollIntoView({behavior:'smooth'});
+      // flash
+      panel.style.transition = 'box-shadow 0.4s ease';
+      panel.style.boxShadow = '0 8px 28px rgba(0,113,227,0.08)';
+      setTimeout(()=> panel.style.boxShadow = 'none', 900);
+    }
+
+    function scrollToSubs(){
+      q('subscriptionsList').scrollIntoView({behavior:'smooth'});
+    }
+
+    function downloadSample(){
+      alert('This is a demo. No actual file will be downloaded.');
+    }
+
+    // Init: hide dashboard by default (already hidden)
+    // Accessibility: allow Enter to sign in from inputs
+    ['username','password'].forEach(id=>{
+      q(id).addEventListener('keyup', function(e){
+        if(e.key === 'Enter') loginForm.requestSubmit();
+      });
+    });
+
+    // Optional: if logo missing, replace with initials
+    const logo = q('brandLogo');
+    logo.addEventListener('error', function(){
+      this.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
